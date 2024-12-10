@@ -8,7 +8,7 @@ namespace ProjectRegistrationSystem.Repositories.Interfaces
     {
         Task<Address> GetAddressByIdAsync(Guid id);
         Task AddAddressAsync(Address address);
-        void DeleteAddress(Address address);
+        Task DeleteAddressAsync(Address address);
         Task SaveChangesAsync();
     }
 }

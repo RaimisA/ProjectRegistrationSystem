@@ -1,7 +1,7 @@
 ﻿using ProjectRegistrationSystem.Data.Entities;
 using ProjectRegistrationSystem.Dtos.Results;
 
-namespace ProjectRegistrationSystem.Services
+namespace ProjectRegistrationSystem.Services.Interfaces
 {
     public interface IPictureService
     {

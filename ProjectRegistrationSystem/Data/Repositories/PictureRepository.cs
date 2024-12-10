@@ -26,9 +26,10 @@ namespace ProjectRegistrationSystem.Repositories
             await _context.Pictures.AddAsync(picture);
         }
 
-        public void DeletePicture(Picture picture)
+        public async Task DeletePictureAsync(Picture picture)
         {
             _context.Pictures.Remove(picture);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdatePictureAsync(Picture picture)

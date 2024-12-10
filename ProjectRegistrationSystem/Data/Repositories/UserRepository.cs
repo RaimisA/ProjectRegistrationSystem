@@ -18,12 +18,12 @@ namespace ProjectRegistrationSystem.Repositories
 
         public async Task<User> GetUserByIdAsync(Guid id)
         {
-            return await _context.Users.Include(u => u.Person).FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.Users.Include(u => u.Person).ThenInclude(p => p.ProfilePicture).Include(a => a.Person!.Address).FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<User> GetUserByUsernameAsync(string username)
         {
-            return await _context.Users.Include(u => u.Person).FirstOrDefaultAsync(u => u.Username == username);
+            return await _context.Users.Include(u => u.Person).ThenInclude(p => p.ProfilePicture).Include(a => a.Person!.Address).FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task AddUserAsync(User user)

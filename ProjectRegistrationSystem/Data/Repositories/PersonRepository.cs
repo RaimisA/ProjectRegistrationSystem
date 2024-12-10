@@ -31,9 +31,10 @@ namespace ProjectRegistrationSystem.Repositories
             await _context.Persons.AddAsync(person);
         }
 
-        public void DeletePerson(Person person)
+        public async Task DeletePersonAsync(Person person)
         {
             _context.Persons.Remove(person);
+            await _context.SaveChangesAsync();
         }
 
         public async Task SaveChangesAsync()

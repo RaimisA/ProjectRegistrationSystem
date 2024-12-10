@@ -8,7 +8,7 @@ namespace ProjectRegistrationSystem.Repositories.Interfaces
     {
         Task<Picture> GetPictureByIdAsync(Guid id);
         Task AddPictureAsync(Picture picture);
-        void DeletePicture(Picture picture);
+        Task DeletePictureAsync(Picture picture);
         Task UpdatePictureAsync(Picture picture);
         Task SaveChangesAsync();
     }

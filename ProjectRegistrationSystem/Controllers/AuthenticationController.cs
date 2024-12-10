@@ -61,9 +61,13 @@ namespace ProjectRegistrationSystem.Controllers
             }
 
             var user = await _userService.GetUserByUsernameAsync(userRequestDto.Username);
-            var person = await _userService.GetPersonInfoByUserIdAsync(user.Id);
-            var token = _jwtService.GetJwtToken(userRequestDto.Username, role, person.Id);
-            return Ok(new { Token = token, PersonId = person.Id });
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var token = _jwtService.GetJwtToken(userRequestDto.Username, role, user.Id);
+            return Ok(new { Token = token, UserId = user.Id });
         }
     }
 }

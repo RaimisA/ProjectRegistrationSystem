@@ -12,13 +12,10 @@ using ProjectRegistrationSystem.Services.Interfaces;
 using System.Reflection;
 using System.Text;
 
-//4. Fronte su nuotrauka kazkaip susitvarkyti
+//1. Paziureti, UserController profile picture
 //2. Fronte pasitvarkyti lenteles. Gal pasidaryti atskirai, kad nesimatytu iskart viskas.
-//3. Ar negalima per Jwt perduoti ID? (galima, patvarkysiu vėliau, jei reikės)
-//7. Gal nereikia GET picture
-//8. Galima padaryti, kad kai prisijungi, tai iskart rodytu tavo duomenis
-//9. Admin gali keisti Roles
-//10. Logger
+//3. Admin gali keisti Roles
+//4. Logger
 //5. Validacijos
 //6. Testai
 

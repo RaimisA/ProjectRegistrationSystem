@@ -285,25 +285,12 @@ namespace ProjectRegistrationSystem.Services
             {
                 return false;
             }
-
-            var existingPicture = person.ProfilePicture;
-            if (existingPicture != null)
-            {
-                existingPicture.FileName = picture.FileName;
-                existingPicture.Data = picture.Data;
-                existingPicture.ContentType = picture.ContentType;
-                existingPicture.Width = picture.Width;
-                existingPicture.Height = picture.Height;
-                await _pictureRepository.UpdatePictureAsync(existingPicture);
-            }
-            else
-            {
-                picture.Id = Guid.NewGuid();
-                person.ProfilePicture = picture;
-                await _pictureRepository.AddPictureAsync(picture);
-                await _personRepository.SaveChangesAsync();
-            }
-
+            person.ProfilePicture.FileName = picture.FileName;
+            person.ProfilePicture.Data = picture.Data;
+            person.ProfilePicture.ContentType = picture.ContentType;
+            person.ProfilePicture.Width = picture.Width;
+            person.ProfilePicture.Height = picture.Height;
+            await _personRepository.SaveChangesAsync();
             return true;
         }
 
@@ -325,13 +312,13 @@ namespace ProjectRegistrationSystem.Services
             {
                 if (person.ProfilePicture != null)
                 {
-                    _pictureRepository.DeletePicture(person.ProfilePicture);
+                    await _pictureRepository.DeletePictureAsync(person.ProfilePicture);
                 }
                 if (person.Address != null)
                 {
-                    _addressRepository.DeleteAddress(person.Address);
+                    await _addressRepository.DeleteAddressAsync(person.Address);
                 }
-                _personRepository.DeletePerson(person);
+                await _personRepository.DeletePersonAsync(person);
             }
 
             await _userRepository.DeleteUserAsync(user);

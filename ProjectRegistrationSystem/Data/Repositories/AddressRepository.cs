@@ -26,9 +26,10 @@ namespace ProjectRegistrationSystem.Repositories
             await _context.Addresses.AddAsync(address);
         }
 
-        public void DeleteAddress(Address address)
+        public async Task DeleteAddressAsync(Address address)
         {
             _context.Addresses.Remove(address);
+            await _context.SaveChangesAsync();
         }
 
         public async Task SaveChangesAsync()

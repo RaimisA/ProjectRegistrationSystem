@@ -15,13 +15,13 @@ namespace ProjectRegistrationSystem.Services
             _configuration = configuration;
         }
 
-        public string GetJwtToken(string username, string role, Guid personId)
+        public string GetJwtToken(string username, string role, Guid userId)
         {
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, role),
-                new Claim("PersonId", personId.ToString())
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString())
             };
 
             var secretToken = _configuration.GetSection("Jwt:Key").Value;

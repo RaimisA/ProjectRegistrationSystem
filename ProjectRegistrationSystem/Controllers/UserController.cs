@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectRegistrationSystem.Dtos.Requests;
 using ProjectRegistrationSystem.Dtos.Results;
 using ProjectRegistrationSystem.Mappers.Interfaces;
-using ProjectRegistrationSystem.Services;
 using ProjectRegistrationSystem.Services.Interfaces;
 using System;
 using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ProjectRegistrationSystem.Controllers
@@ -44,25 +42,17 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Adds person information for the authenticated user.
+        /// Adds person information for the specified user.
         /// </summary>
+        /// <param name="userId">The user ID.</param>
         /// <param name="personRequestDto">The person request DTO.</param>
         /// <param name="profilePicture">The profile picture file.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPost("addPersonInfo")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> AddPersonInfo([FromForm] PersonRequestDto personRequestDto, IFormFile profilePicture)
+        public async Task<IActionResult> AddPersonInfo(Guid userId, [FromForm] PersonRequestDto personRequestDto, IFormFile profilePicture)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userIdClaim == null)
-            {
-                return Unauthorized("User ID claim not found.");
-            }
-
-            var userId = new Guid(userIdClaim);
             var person = _personMapper.Map(personRequestDto);
-
-            // Process and save the profile picture
             if (profilePicture != null)
             {
                 using var memoryStream = new MemoryStream();
@@ -86,14 +76,14 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Gets person information by ID.
+        /// Gets person information for the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPersonInfo(Guid id)
+        [HttpGet("getPersonInfo")]
+        public async Task<IActionResult> GetPersonInfo(Guid userId)
         {
-            var person = await _userService.GetPersonInfoAsync(id);
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
             if (person == null)
             {
                 return NotFound("Person not found.");
@@ -103,19 +93,26 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the first name of a person.
+        /// Updates the first name of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="firstName">The new first name.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateFirstName")]
-        public async Task<IActionResult> UpdateFirstName(Guid id, [FromBody] string firstName)
+        public async Task<IActionResult> UpdateFirstName(Guid userId, [FromBody] string firstName)
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
                 return BadRequest("First name cannot be empty or whitespace.");
             }
-            var result = await _userService.UpdateFirstNameAsync(id, firstName);
+
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
+            }
+
+            var result = await _userService.UpdateFirstNameAsync(person.Id, firstName);
             if (!result)
             {
                 return BadRequest("Failed to update first name.");
@@ -124,19 +121,26 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the last name of a person.
+        /// Updates the last name of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="lastName">The new last name.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateLastName")]
-        public async Task<IActionResult> UpdateLastName(Guid id, [FromBody] string lastName)
+        public async Task<IActionResult> UpdateLastName(Guid userId, [FromBody] string lastName)
         {
             if (string.IsNullOrWhiteSpace(lastName))
             {
                 return BadRequest("Last name cannot be empty or whitespace.");
             }
-            var result = await _userService.UpdateLastNameAsync(id, lastName);
+
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
+            }
+
+            var result = await _userService.UpdateLastNameAsync(person.Id, lastName);
             if (!result)
             {
                 return BadRequest("Failed to update last name.");
@@ -145,19 +149,26 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the personal code of a person.
+        /// Updates the personal code of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="personalCode">The new personal code.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updatePersonalCode")]
-        public async Task<IActionResult> UpdatePersonalCode(Guid id, [FromBody] string personalCode)
+        public async Task<IActionResult> UpdatePersonalCode(Guid userId, [FromBody] string personalCode)
         {
             if (string.IsNullOrWhiteSpace(personalCode))
             {
                 return BadRequest("Personal code cannot be empty or whitespace.");
             }
-            var result = await _userService.UpdatePersonalCodeAsync(id, personalCode);
+
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
+            }
+
+            var result = await _userService.UpdatePersonalCodeAsync(person.Id, personalCode);
             if (!result)
             {
                 return BadRequest("Failed to update personal code.");
@@ -166,19 +177,26 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the phone number of a person.
+        /// Updates the phone number of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="phoneNumber">The new phone number.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updatePhoneNumber")]
-        public async Task<IActionResult> UpdatePhoneNumber(Guid id, [FromBody] string phoneNumber)
+        public async Task<IActionResult> UpdatePhoneNumber(Guid userId, [FromBody] string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
                 return BadRequest("Phone number cannot be empty or whitespace.");
             }
-            var result = await _userService.UpdatePhoneNumberAsync(id, phoneNumber);
+
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
+            }
+
+            var result = await _userService.UpdatePhoneNumberAsync(person.Id, phoneNumber);
             if (!result)
             {
                 return BadRequest("Failed to update phone number.");
@@ -187,19 +205,26 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the email of a person.
+        /// Updates the email of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="email">The new email.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateEmail")]
-        public async Task<IActionResult> UpdateEmail(Guid id, [FromBody] string email)
+        public async Task<IActionResult> UpdateEmail(Guid userId, [FromBody] string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
                 return BadRequest("Email cannot be empty or whitespace.");
             }
-            var result = await _userService.UpdateEmailAsync(id, email);
+
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
+            }
+
+            var result = await _userService.UpdateEmailAsync(person.Id, email);
             if (!result)
             {
                 return BadRequest("Failed to update email.");
@@ -208,16 +233,22 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the address of a person.
+        /// Updates the address of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="addressRequestDto">The new address request DTO.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateAddress")]
-        public async Task<IActionResult> UpdateAddress(Guid id, [FromBody] AddressRequestDto addressRequestDto)
+        public async Task<IActionResult> UpdateAddress(Guid userId, [FromBody] AddressRequestDto addressRequestDto)
         {
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
+            }
+
             var address = _addressMapper.Map(addressRequestDto);
-            var result = await _userService.UpdateAddressAsync(id, address);
+            var result = await _userService.UpdateAddressAsync(person.Id, address);
             if (!result)
             {
                 return BadRequest("Failed to update address.");
@@ -226,18 +257,24 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Updates the profile picture of a person.
+        /// Updates the profile picture of the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <param name="profilePicture">The new profile picture file.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateProfilePicture")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UpdateProfilePicture(Guid id, IFormFile profilePicture)
+        public async Task<IActionResult> UpdateProfilePicture(Guid userId, IFormFile profilePicture)
         {
             if (profilePicture == null)
             {
                 return BadRequest("Profile picture cannot be null.");
+            }
+
+            var person = await _userService.GetPersonInfoByUserIdAsync(userId);
+            if (person == null)
+            {
+                return NotFound("Person not found.");
             }
 
             using var memoryStream = new MemoryStream();
@@ -250,7 +287,7 @@ namespace ProjectRegistrationSystem.Controllers
             };
             var picture = await _pictureService.ProcessAndSavePictureAsync(pictureRequestDto);
 
-            var result = await _userService.UpdateProfilePictureAsync(id, picture);
+            var result = await _userService.UpdateProfilePictureAsync(person.Id, picture);
             if (!result)
             {
                 return BadRequest("Failed to update profile picture.");
@@ -259,33 +296,14 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Gets the profile picture of a person by ID.
+        /// Deletes the specified user.
         /// </summary>
-        /// <param name="id">The person ID.</param>
+        /// <param name="userId">The user ID.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
-        [HttpGet("{id}/profilePicture")]
-        public async Task<IActionResult> GetProfilePicture(Guid id)
+        [HttpDelete("deleteUser")]
+        public async Task<IActionResult> DeleteUser(Guid userId)
         {
-            var person = await _userService.GetPersonInfoAsync(id);
-            if (person == null || person.ProfilePicture == null)
-            {
-                return NotFound("Profile picture not found.");
-            }
-
-            var pictureResultDto = _pictureMapper.Map(person.ProfilePicture);
-            return File(pictureResultDto.Data, pictureResultDto.ContentType, pictureResultDto.FileName);
-        }
-
-        /// <summary>
-        /// Deletes a user by ID.
-        /// </summary>
-        /// <param name="id">The user ID.</param>
-        /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            var result = await _userService.DeleteUserAsync(id);
+            var result = await _userService.DeleteUserAsync(userId);
             if (!result)
             {
                 return BadRequest("Failed to delete user.");
