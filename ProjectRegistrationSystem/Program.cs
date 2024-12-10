@@ -12,11 +12,8 @@ using ProjectRegistrationSystem.Services.Interfaces;
 using System.Reflection;
 using System.Text;
 
-//1. Paziureti, UserController profile picture
 //2. Fronte pasitvarkyti lenteles. Gal pasidaryti atskirai, kad nesimatytu iskart viskas.
 //3. Admin gali keisti Roles
-//4. Logger
-//5. Validacijos
 //6. Testai
 
 

@@ -1,5 +1,6 @@
 ﻿using ProjectRegistrationSystem.Data.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ProjectRegistrationSystem.Services.Interfaces
@@ -20,5 +21,7 @@ namespace ProjectRegistrationSystem.Services.Interfaces
         Task<bool> DeleteUserAsync(Guid id);
         Task<User> GetUserByUsernameAsync(string username);
         Task<(bool Success, string Role)> LoginAsync(string username, string password);
+        Task<bool> UpdateUserRoleAsync(Guid userId, string role);
+        Task<IEnumerable<User>> GetAllUsersAsync();
     }
 }

@@ -12,10 +12,7 @@ namespace ProjectRegistrationSystem.Repositories.Interfaces
         Task AddUserAsync(User user);
         Task DeleteUserAsync(User user);
         Task SaveChangesAsync();
+        Task UpdateUserRoleAsync(Guid userId, string role);
+        Task<IEnumerable<User>> GetAllUsersAsync();
     }
 }
-
-
-
-
-

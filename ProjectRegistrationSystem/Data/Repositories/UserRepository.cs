@@ -3,6 +3,7 @@ using ProjectRegistrationSystem.Data;
 using ProjectRegistrationSystem.Data.Entities;
 using ProjectRegistrationSystem.Repositories.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ProjectRegistrationSystem.Repositories
@@ -40,10 +41,21 @@ namespace ProjectRegistrationSystem.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateUserRoleAsync(Guid userId, string role)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                user.Role = role;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
     }
 }
-
-
-
-
-
