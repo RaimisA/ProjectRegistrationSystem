@@ -97,7 +97,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var personResultDto = _personMapper.Map(person);
@@ -125,7 +125,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var result = await _userService.UpdateFirstNameAsync(person.Id, firstName);
@@ -159,7 +159,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var result = await _userService.UpdateLastNameAsync(person.Id, lastName);
@@ -193,7 +193,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var result = await _userService.UpdatePersonalCodeAsync(person.Id, personalCode);
@@ -227,7 +227,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var result = await _userService.UpdatePhoneNumberAsync(person.Id, phoneNumber);
@@ -261,7 +261,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var result = await _userService.UpdateEmailAsync(person.Id, email);
@@ -290,7 +290,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             var address = _addressMapper.Map(addressRequestDto);
@@ -326,7 +326,7 @@ namespace ProjectRegistrationSystem.Controllers
             if (person == null)
             {
                 _logger.LogWarning("Person not found for user ID: {UserId}", userId);
-                return NotFound("Person not found.");
+                return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
             using var memoryStream = new MemoryStream();

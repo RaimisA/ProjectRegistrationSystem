@@ -12,11 +12,8 @@ using ProjectRegistrationSystem.Services.Interfaces;
 using System.Reflection;
 using System.Text;
 
-//2. Fronte pasitvarkyti lenteles. Gal pasidaryti atskirai, kad nesimatytu iskart viskas.
-//3. Admin gali keisti Roles
+//1. Delete user netrina is User
 //6. Testai
-
-
 
 
 namespace ProjectRegistrationSystem

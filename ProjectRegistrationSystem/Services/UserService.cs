@@ -2,7 +2,6 @@
 using ProjectRegistrationSystem.Repositories.Interfaces;
 using ProjectRegistrationSystem.Services.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -233,6 +232,7 @@ namespace ProjectRegistrationSystem.Services
 
             await _userRepository.DeleteUserAsync(user);
             await _userRepository.SaveChangesAsync();
+
             return true;
         }
 
