@@ -2,7 +2,7 @@
 using ProjectRegistrationSystem.Validators;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectRegistrationSystem.Dtos.Results
+namespace ProjectRegistrationSystem.Dtos.Requests
 {
     public class PersonRequestDto
     {
@@ -15,7 +15,7 @@ namespace ProjectRegistrationSystem.Dtos.Results
         public string LastName { get; set; }
 
         [Required]
-        [RegularExpressionValidator(Pattern = @"^\d{11}$", ErrorMessage = "Personal code must be 11 digits.")]
+        [RegularExpression(@"^\d{11}$", ErrorMessage = "Personal code must be 11 digits.")]
         public string PersonalCode { get; set; }
 
         [Required]

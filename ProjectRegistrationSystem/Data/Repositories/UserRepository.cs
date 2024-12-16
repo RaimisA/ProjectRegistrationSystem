@@ -60,6 +60,7 @@ namespace ProjectRegistrationSystem.Repositories
         public async Task DeleteUserAsync(User user)
         {
             _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>

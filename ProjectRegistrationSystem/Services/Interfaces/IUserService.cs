@@ -23,5 +23,6 @@ namespace ProjectRegistrationSystem.Services.Interfaces
         Task<(bool Success, string Role)> LoginAsync(string username, string password);
         Task<bool> UpdateUserRoleAsync(Guid userId, string role);
         Task<IEnumerable<User>> GetAllUsersAsync();
+        Task CheckPersonInfoAsync(string personalCode, string phoneNumber, string email);
     }
 }

@@ -1,11 +1,12 @@
 ﻿using ProjectRegistrationSystem.Validators;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectRegistrationSystem.Dtos.Results
+namespace ProjectRegistrationSystem.Dtos.Requests
 {
     public class PictureRequestDto
     {
         [Required]
+        [StringLength(100, MinimumLength = 1)]
         public string FileName { get; set; }
 
         [Required]

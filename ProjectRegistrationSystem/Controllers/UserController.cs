@@ -57,6 +57,16 @@ namespace ProjectRegistrationSystem.Controllers
         {
             _logger.LogInformation("Adding person information for user ID: {UserId}", userId);
 
+            try
+            {
+                await _userService.CheckPersonInfoAsync(personRequestDto.PersonalCode, personRequestDto.PhoneNumber, personRequestDto.Email);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Validation failed for user ID: {UserId}", userId);
+                return BadRequest(ex.Message);
+            }
+
             var person = _personMapper.Map(personRequestDto);
             if (profilePicture != null)
             {
@@ -109,16 +119,11 @@ namespace ProjectRegistrationSystem.Controllers
         /// Updates the first name of the specified user.
         /// </summary>
         /// <param name="userId">The user ID.</param>
-        /// <param name="firstName">The new first name.</param>
+        /// <param name="updateFirstNameDto">The DTO containing the new first name.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateFirstName")]
-        public async Task<IActionResult> UpdateFirstName(Guid userId, [FromBody] string firstName)
+        public async Task<IActionResult> UpdateFirstName(Guid userId, [FromBody] UpdateFirstNameDto updateFirstNameDto)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
-            {
-                return BadRequest("First name cannot be empty or whitespace.");
-            }
-
             _logger.LogInformation("Updating first name for user ID: {UserId}", userId);
 
             var person = await _userService.GetPersonInfoByUserIdAsync(userId);
@@ -128,7 +133,7 @@ namespace ProjectRegistrationSystem.Controllers
                 return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
-            var result = await _userService.UpdateFirstNameAsync(person.Id, firstName);
+            var result = await _userService.UpdateFirstNameAsync(person.Id, updateFirstNameDto.FirstName);
             if (!result)
             {
                 _logger.LogError("Failed to update first name for user ID: {UserId}", userId);
@@ -143,16 +148,11 @@ namespace ProjectRegistrationSystem.Controllers
         /// Updates the last name of the specified user.
         /// </summary>
         /// <param name="userId">The user ID.</param>
-        /// <param name="lastName">The new last name.</param>
+        /// <param name="updateLastNameDto">The DTO containing the new last name.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateLastName")]
-        public async Task<IActionResult> UpdateLastName(Guid userId, [FromBody] string lastName)
+        public async Task<IActionResult> UpdateLastName(Guid userId, [FromBody] UpdateLastNameDto updateLastNameDto)
         {
-            if (string.IsNullOrWhiteSpace(lastName))
-            {
-                return BadRequest("Last name cannot be empty or whitespace.");
-            }
-
             _logger.LogInformation("Updating last name for user ID: {UserId}", userId);
 
             var person = await _userService.GetPersonInfoByUserIdAsync(userId);
@@ -162,7 +162,7 @@ namespace ProjectRegistrationSystem.Controllers
                 return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
-            var result = await _userService.UpdateLastNameAsync(person.Id, lastName);
+            var result = await _userService.UpdateLastNameAsync(person.Id, updateLastNameDto.LastName);
             if (!result)
             {
                 _logger.LogError("Failed to update last name for user ID: {UserId}", userId);
@@ -177,16 +177,11 @@ namespace ProjectRegistrationSystem.Controllers
         /// Updates the personal code of the specified user.
         /// </summary>
         /// <param name="userId">The user ID.</param>
-        /// <param name="personalCode">The new personal code.</param>
+        /// <param name="updatePersonalCodeDto">The DTO containing the new personal code.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updatePersonalCode")]
-        public async Task<IActionResult> UpdatePersonalCode(Guid userId, [FromBody] string personalCode)
+        public async Task<IActionResult> UpdatePersonalCode(Guid userId, [FromBody] UpdatePersonalCodeDto updatePersonalCodeDto)
         {
-            if (string.IsNullOrWhiteSpace(personalCode))
-            {
-                return BadRequest("Personal code cannot be empty or whitespace.");
-            }
-
             _logger.LogInformation("Updating personal code for user ID: {UserId}", userId);
 
             var person = await _userService.GetPersonInfoByUserIdAsync(userId);
@@ -196,7 +191,17 @@ namespace ProjectRegistrationSystem.Controllers
                 return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
-            var result = await _userService.UpdatePersonalCodeAsync(person.Id, personalCode);
+            try
+            {
+                await _userService.CheckPersonInfoAsync(updatePersonalCodeDto.PersonalCode, null, null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Validation failed for user ID: {UserId}", userId);
+                return BadRequest(ex.Message);
+            }
+
+            var result = await _userService.UpdatePersonalCodeAsync(person.Id, updatePersonalCodeDto.PersonalCode);
             if (!result)
             {
                 _logger.LogError("Failed to update personal code for user ID: {UserId}", userId);
@@ -211,16 +216,11 @@ namespace ProjectRegistrationSystem.Controllers
         /// Updates the phone number of the specified user.
         /// </summary>
         /// <param name="userId">The user ID.</param>
-        /// <param name="phoneNumber">The new phone number.</param>
+        /// <param name="updatePhoneNumberDto">The DTO containing the new phone number.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updatePhoneNumber")]
-        public async Task<IActionResult> UpdatePhoneNumber(Guid userId, [FromBody] string phoneNumber)
+        public async Task<IActionResult> UpdatePhoneNumber(Guid userId, [FromBody] UpdatePhoneNumberDto updatePhoneNumberDto)
         {
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-            {
-                return BadRequest("Phone number cannot be empty or whitespace.");
-            }
-
             _logger.LogInformation("Updating phone number for user ID: {UserId}", userId);
 
             var person = await _userService.GetPersonInfoByUserIdAsync(userId);
@@ -230,7 +230,17 @@ namespace ProjectRegistrationSystem.Controllers
                 return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
-            var result = await _userService.UpdatePhoneNumberAsync(person.Id, phoneNumber);
+            try
+            {
+                await _userService.CheckPersonInfoAsync(null, updatePhoneNumberDto.PhoneNumber, null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Validation failed for user ID: {UserId}", userId);
+                return BadRequest(ex.Message);
+            }
+
+            var result = await _userService.UpdatePhoneNumberAsync(person.Id, updatePhoneNumberDto.PhoneNumber);
             if (!result)
             {
                 _logger.LogError("Failed to update phone number for user ID: {UserId}", userId);
@@ -245,16 +255,11 @@ namespace ProjectRegistrationSystem.Controllers
         /// Updates the email of the specified user.
         /// </summary>
         /// <param name="userId">The user ID.</param>
-        /// <param name="email">The new email.</param>
+        /// <param name="updateEmailDto">The DTO containing the new email.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpPut("updateEmail")]
-        public async Task<IActionResult> UpdateEmail(Guid userId, [FromBody] string email)
+        public async Task<IActionResult> UpdateEmail(Guid userId, [FromBody] UpdateEmailDto updateEmailDto)
         {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest("Email cannot be empty or whitespace.");
-            }
-
             _logger.LogInformation("Updating email for user ID: {UserId}", userId);
 
             var person = await _userService.GetPersonInfoByUserIdAsync(userId);
@@ -264,7 +269,17 @@ namespace ProjectRegistrationSystem.Controllers
                 return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
-            var result = await _userService.UpdateEmailAsync(person.Id, email);
+            try
+            {
+                await _userService.CheckPersonInfoAsync(null, null, updateEmailDto.Email);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Validation failed for user ID: {UserId}", userId);
+                return BadRequest(ex.Message);
+            }
+
+            var result = await _userService.UpdateEmailAsync(person.Id, updateEmailDto.Email);
             if (!result)
             {
                 _logger.LogError("Failed to update email for user ID: {UserId}", userId);
@@ -396,7 +411,7 @@ namespace ProjectRegistrationSystem.Controllers
         }
 
         /// <summary>
-        /// Retrieves all users with their usernames and user IDs. (Admin only)
+        /// Retrieves all users with their usernames, roles and user IDs. (Admin only)
         /// </summary>
         /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
         [HttpGet("getAllUsers")]
@@ -406,7 +421,7 @@ namespace ProjectRegistrationSystem.Controllers
             _logger.LogInformation("Retrieving all users.");
 
             var users = await _userService.GetAllUsersAsync();
-            var result = users.Select(u => new { u.Username, u.Id }).ToList();
+            var result = users.Select(u => new { u.Username, u.Id, u.Role }).ToList();
 
             _logger.LogInformation("All users retrieved successfully.");
             return Ok(result);

@@ -1,5 +1,5 @@
 ﻿using ProjectRegistrationSystem.Data.Entities;
-using ProjectRegistrationSystem.Dtos.Results;
+using ProjectRegistrationSystem.Dtos.Requests;
 
 namespace ProjectRegistrationSystem.Services.Interfaces
 {

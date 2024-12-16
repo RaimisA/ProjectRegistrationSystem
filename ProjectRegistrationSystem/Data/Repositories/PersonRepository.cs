@@ -44,6 +44,36 @@ namespace ProjectRegistrationSystem.Repositories
         }
 
         /// <summary>
+        /// Gets a person by their personal code.
+        /// </summary>
+        /// <param name="personalCode">The personal code of the person.</param>
+        /// <returns>The person entity.</returns>
+        public async Task<Person> GetPersonByPersonalCodeAsync(string personalCode)
+        {
+            return await _context.Persons.FirstOrDefaultAsync(p => p.PersonalCode == personalCode);
+        }
+
+        /// <summary>
+        /// Gets a person by their phone number.
+        /// </summary>
+        /// <param name="phoneNumber">The phone number of the person.</param>
+        /// <returns>The person entity.</returns>
+        public async Task<Person> GetPersonByPhoneNumberAsync(string phoneNumber)
+        {
+            return await _context.Persons.FirstOrDefaultAsync(p => p.PhoneNumber == phoneNumber);
+        }
+
+        /// <summary>
+        /// Gets a person by their email.
+        /// </summary>
+        /// <param name="email">The email of the person.</param>
+        /// <returns>The person entity.</returns>
+        public async Task<Person> GetPersonByEmailAsync(string email)
+        {
+            return await _context.Persons.FirstOrDefaultAsync(p => p.Email == email);
+        }
+
+        /// <summary>
         /// Adds a new person to the database.
         /// </summary>
         /// <param name="person">The person entity to add.</param>

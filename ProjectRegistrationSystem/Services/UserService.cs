@@ -37,6 +37,27 @@ namespace ProjectRegistrationSystem.Services
             return user;
         }
 
+        public async Task CheckPersonInfoAsync(string personalCode, string phoneNumber, string email)
+        {
+            var existingPerson = await _personRepository.GetPersonByPersonalCodeAsync(personalCode);
+            if (existingPerson != null)
+            {
+                throw new InvalidOperationException("Personal code already exists.");
+            }
+
+            existingPerson = await _personRepository.GetPersonByPhoneNumberAsync(phoneNumber);
+            if (existingPerson != null)
+            {
+                throw new InvalidOperationException("Phone number already exists.");
+            }
+
+            existingPerson = await _personRepository.GetPersonByEmailAsync(email);
+            if (existingPerson != null)
+            {
+                throw new InvalidOperationException("Email already exists.");
+            }
+        }
+
         public User CreateUser(string username, string password)
         {
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -227,7 +248,6 @@ namespace ProjectRegistrationSystem.Services
                 {
                     await _addressRepository.DeleteAddressAsync(person.Address);
                 }
-                await _personRepository.DeletePersonAsync(person);
             }
 
             await _userRepository.DeleteUserAsync(user);
@@ -243,7 +263,6 @@ namespace ProjectRegistrationSystem.Services
 
         public async Task<bool> UpdateUserRoleAsync(Guid userId, string role)
         {
-            // Convert role to a consistent case (e.g., capitalize first letter)
             role = char.ToUpper(role[0]) + role.Substring(1).ToLower();
 
             await _userRepository.UpdateUserRoleAsync(userId, role);
