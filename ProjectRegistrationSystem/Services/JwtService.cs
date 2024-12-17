@@ -6,15 +6,29 @@ using System.Text;
 
 namespace ProjectRegistrationSystem.Services
 {
+    /// <summary>
+    /// Service for generating JWT tokens.
+    /// </summary>
     public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JwtService"/> class.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
         public JwtService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Generates a JWT token for the specified user.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <param name="role">The role of the user.</param>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>The generated JWT token.</returns>
         public string GetJwtToken(string username, string role, Guid userId)
         {
             List<Claim> claims = new List<Claim>

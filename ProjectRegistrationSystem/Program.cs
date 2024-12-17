@@ -12,14 +12,17 @@ using ProjectRegistrationSystem.Services.Interfaces;
 using System.Reflection;
 using System.Text;
 
-//1. Delete user netrina is User
-//6. Testai
-
-
 namespace ProjectRegistrationSystem
 {
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The main method, which is the entry point of the application.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -103,7 +106,7 @@ namespace ProjectRegistrationSystem
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
             });
 
-            // use cors policy
+            // Use CORS policy
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowLocalhost", builder =>

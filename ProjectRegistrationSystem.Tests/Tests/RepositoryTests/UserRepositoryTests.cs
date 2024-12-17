@@ -10,7 +10,7 @@ using Xunit;
 
 namespace ProjectRegistrationSystem.Tests.RepositoryTests
 {
-    public class UserRepositoryTests
+    public class UserRepositoryTests : IDisposable
     {
         private readonly ApplicationDbContext _context;
         private readonly UserRepository _userRepository;
@@ -18,7 +18,7 @@ namespace ProjectRegistrationSystem.Tests.RepositoryTests
         public UserRepositoryTests()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
             _context = new ApplicationDbContext(options);
             _userRepository = new UserRepository(_context);
@@ -181,6 +181,12 @@ namespace ProjectRegistrationSystem.Tests.RepositoryTests
             var result = await _context.Users.FindAsync(user.Id);
             Assert.NotNull(result);
             Assert.Equal(user.Id, result.Id);
+        }
+
+        public void Dispose()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
         }
     }
 }

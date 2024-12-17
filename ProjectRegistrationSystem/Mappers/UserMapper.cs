@@ -5,8 +5,16 @@ using ProjectRegistrationSystem.Mappers.Interfaces;
 
 namespace ProjectRegistrationSystem.Mappers
 {
+    /// <summary>
+    /// Mapper for converting between User entities and DTOs.
+    /// </summary>
     public class UserMapper : IUserMapper
     {
+        /// <summary>
+        /// Maps a UserRequestDto to a User entity.
+        /// </summary>
+        /// <param name="dto">The UserRequestDto.</param>
+        /// <returns>The User entity.</returns>
         public User Map(UserRequestDto dto)
         {
             return new User
@@ -16,6 +24,11 @@ namespace ProjectRegistrationSystem.Mappers
             };
         }
 
+        /// <summary>
+        /// Maps a User entity to a UserResultDto.
+        /// </summary>
+        /// <param name="entity">The User entity.</param>
+        /// <returns>The UserResultDto.</returns>
         public UserResultDto Map(User entity)
         {
             return new UserResultDto

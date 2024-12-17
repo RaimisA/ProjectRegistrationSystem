@@ -7,6 +7,7 @@ using ProjectRegistrationSystem.Mappers.Interfaces;
 using ProjectRegistrationSystem.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -344,25 +345,43 @@ namespace ProjectRegistrationSystem.Controllers
                 return NotFound(new { Message = $"Person not found for user ID: {userId}" });
             }
 
-            using var memoryStream = new MemoryStream();
-            await profilePicture.CopyToAsync(memoryStream);
-            var pictureRequestDto = new PictureRequestDto
+            try
             {
-                FileName = profilePicture.FileName,
-                Data = memoryStream.ToArray(),
-                ContentType = profilePicture.ContentType
-            };
-            var picture = await _pictureService.ProcessAndSavePictureAsync(pictureRequestDto, person.ProfilePicture?.Id);
+                using var memoryStream = new MemoryStream();
+                await profilePicture.CopyToAsync(memoryStream);
+                var pictureRequestDto = new PictureRequestDto
+                {
+                    FileName = profilePicture.FileName,
+                    Data = memoryStream.ToArray(),
+                    ContentType = profilePicture.ContentType
+                };
 
-            var result = await _userService.UpdateProfilePictureAsync(person.Id, picture);
-            if (!result)
-            {
-                _logger.LogError("Failed to update profile picture for user ID: {UserId}", userId);
-                return BadRequest("Failed to update profile picture.");
+                // Validate the file extension
+                var validationContext = new ValidationContext(pictureRequestDto);
+                Validator.ValidateObject(pictureRequestDto, validationContext, validateAllProperties: true);
+
+                var picture = await _pictureService.ProcessAndSavePictureAsync(pictureRequestDto, person.ProfilePicture?.Id);
+
+                var result = await _userService.UpdateProfilePictureAsync(person.Id, picture);
+                if (!result)
+                {
+                    _logger.LogError("Failed to update profile picture for user ID: {UserId}", userId);
+                    return BadRequest("Failed to update profile picture.");
+                }
+
+                _logger.LogInformation("Profile picture updated successfully for user ID: {UserId}", userId);
+                return Ok("Profile picture updated successfully.");
             }
-
-            _logger.LogInformation("Profile picture updated successfully for user ID: {UserId}", userId);
-            return Ok("Profile picture updated successfully.");
+            catch (ValidationException ex)
+            {
+                _logger.LogError(ex, "Validation failed for profile picture for user ID: {UserId}", userId);
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Failed to process profile picture for user ID: {UserId}", userId);
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
