@@ -6,6 +6,7 @@ using ProjectRegistrationSystem.Data.Entities;
 using ProjectRegistrationSystem.Dtos.Requests;
 using ProjectRegistrationSystem.Services.Interfaces;
 using ProjectRegistrationSystem.Tests.DataAttributes;
+using ProjectRegistrationSystem.Tests.Dtos;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -40,7 +41,8 @@ namespace ProjectRegistrationSystem.Tests.ControllerTests
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal("User registered successfully.", okResult.Value);
+            Assert.NotNull(okResult.Value);
+            Assert.Contains("User registered successfully", okResult.Value.ToString());
         }
 
         [Theory]
@@ -56,7 +58,8 @@ namespace ProjectRegistrationSystem.Tests.ControllerTests
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("User already exists", badRequestResult.Value);
+            Assert.NotNull(badRequestResult.Value);
+            Assert.Contains("User already exists", badRequestResult.Value.ToString());
         }
 
         [Theory]

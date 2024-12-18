@@ -39,18 +39,18 @@ namespace ProjectRegistrationSystem.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRequestDto userRequestDto)
         {
-            _logger.LogInformation("Registering new user with username: {Username}", userRequestDto.Username);
+            _logger.LogInformation("Registering user with username: {Username}", userRequestDto.Username);
 
             try
             {
                 var user = await _userService.RegisterUserAsync(userRequestDto.Username, userRequestDto.Password);
                 _logger.LogInformation("User registered successfully with username: {Username}", userRequestDto.Username);
-                return Ok("User registered successfully.");
+                return Ok(new { Message = "User registered successfully." });
             }
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex, "Failed to register user with username: {Username}", userRequestDto.Username);
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
